@@ -22,7 +22,6 @@ showlife_size = 200,100
 balllife_size = 45,45
 background_size = Width, Length
 
-
 #運作
 Running=True
 init_rectx = random.randint(0,Width)
@@ -51,6 +50,7 @@ show_life_img = pygame.image.load(os.path.join("show life.png")).convert()
 background_img = pygame.image.load(os.path.join("background.jpg")).convert()
 background_img = pygame.transform.scale(background_img, (background_size))
 pygame.display.set_icon(balllife_img)
+
 pressed_sound = pygame.mixer.Sound(os.path.join("Sound","pressed_300.wav"))
 pygame.mixer.music.load(os.path.join("Sound","background.mp3"))
 
@@ -105,11 +105,7 @@ class Button(pygame.sprite.Sprite):
         if button_pressed == 1:  
             add_score = 0
             #score
-            if self.rect.top <= LINELENGTH:
-                add_score = int ( SCORERANGE + self.rect.top - LINELENGTH)
-            if self.rect.top > LINELENGTH:
-                add_score = int ( SCORERANGE - self.rect.top + LINELENGTH)
-
+            add_score = int (SCORERANGE - abs(self.rect.top - LINELENGTH))
             if  0 < add_score <= SCORERANGE:
                 pressed_sound.play()
                 add_score = add_score + 300
