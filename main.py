@@ -1,4 +1,3 @@
-
 #匯入模組
 import pygame, os , random ,time
 
@@ -6,8 +5,7 @@ import pygame, os , random ,time
 pygame.init()
 Width,Length = 900,600
 screen = pygame.display.set_mode((Width,Length))
-pygame.display.set_caption("little game")
-
+pygame.display.set_caption("reaction game")
 
 #顏色、文字
 Background = 255,62,150
@@ -21,6 +19,7 @@ ball_big = 50,50
 showlife_size = 200,100
 balllife_size = 45,45
 background_size = Width, Length
+MAX_LIFE = 3
 
 #運作
 Running=True
@@ -35,8 +34,10 @@ SPEED_LEVEL = [8.6,9.3,10.2,11.5,13,19]
 Speed = SPEED_LEVEL[0]
 SCORERANGE = 100
 fallcount = -1
-lifeleft = 3
+lifeleft = MAX_LIFE
 play_again = False
+width_judge = 10
+length_judge = 5
 
 #圖片
 line_img = pygame.image.load("Line.png").convert()
@@ -49,7 +50,7 @@ balllife_img = pygame.transform.scale(button_img, (balllife_size))
 show_life_img = pygame.image.load(os.path.join("show life.png")).convert()
 background_img = pygame.image.load(os.path.join("background.jpg")).convert()
 background_img = pygame.transform.scale(background_img, (background_size))
-pygame.display.set_icon(balllife_img)
+pygame.display.set_icon(balllife_img) #設定icon
 
 pressed_sound = pygame.mixer.Sound(os.path.join("Sound","pressed_300.wav"))
 pygame.mixer.music.load(os.path.join("Sound","background.mp3"))
@@ -105,7 +106,11 @@ class Button(pygame.sprite.Sprite):
         if button_pressed == 1:  
             add_score = 0
             #score
-            add_score = int (SCORERANGE - abs(self.rect.top - LINELENGTH))
+            if self.rect.top <= LINELENGTH:
+                add_score = int ( SCORERANGE + self.rect.top - LINELENGTH)
+            if self.rect.top > LINELENGTH:
+                add_score = int ( SCORERANGE - self.rect.top + LINELENGTH)
+
             if  0 < add_score <= SCORERANGE:
                 pressed_sound.play()
                 add_score = add_score + 300
@@ -186,7 +191,7 @@ while Running:
     for event in pygame.event.get():
         if event.type == pygame.MOUSEBUTTONUP:
             mouse_xy = pygame.mouse.get_pos()       
-            if button_left-10 < mouse_xy[0] < button_right+10 and button_top-5 < mouse_xy[1] < button_bottom+5:
+            if button_left- width_judge < mouse_xy[0] < button_right + width_judge and button_top - length_judge < mouse_xy[1] < button_bottom+ length_judge:
                 print("YES")
                 button_pressed = 1     
         if event.type == pygame.QUIT:
@@ -205,7 +210,7 @@ while Running:
         button_pressed = 0
         Speed = SPEED_LEVEL[0]
         fallcount = -1
-        lifeleft = 3
+        lifeleft = MAX_LIFE
         All_sprites = pygame.sprite.Group()
         Buttons = Button()
         All_sprites.add(Buttons)
